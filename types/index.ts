@@ -57,6 +57,7 @@ export interface HomeProps {
 // Updated for Cat Card
 export interface CatCardProps {
   weight: { imperial: string; metric: string };
+  description: string;
   id: string;
   name: string;
   cfa_url: string;
@@ -66,7 +67,6 @@ export interface CatCardProps {
   origin: string;
   country_codes: string;
   country_code: string;
-  description: string;
   life_span: string;
   indoor: number;
   lap: number;
@@ -113,7 +113,7 @@ export interface OptionProps {
 
 export interface CustomFilterProps {
   title: string;
-  options: OptionProps[];
+  options?: OptionProps[];
 }
 
 export interface ShowMoreProps {
@@ -124,4 +124,9 @@ export interface ShowMoreProps {
 export interface SearchOriginProps {
   origin: string;
   setOrigin: (origin: string) => void;
+}
+
+export interface SearchBreedProps{
+  breed: string;
+  setBreed: (breed: string) => void;
 }

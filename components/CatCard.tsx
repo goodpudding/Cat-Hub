@@ -3,11 +3,10 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 
-import { calculateCatAdoptionScore, fetchBreedImage } from "@/utils";
+import { calculateCatAdoptionScore, fetchBreedImages } from "@/utils";
 import { CatBreedProps } from "@/types";
 import CustomButton from "./CustomButton";
 import CatDetails from "./CatDetails";
-// import CatDetails from "./CatDetails"; // You would create this component
 
 interface CatCardProps {
   cat: CatBreedProps;
@@ -15,16 +14,24 @@ interface CatCardProps {
 
 const CatCard = ({ cat }: CatCardProps) => {
   const { name, temperament, affection_level, intelligence } = cat;
-  const [catBreedImage, setCatBreedImage] = useState(null);
+  const [catImages, setCatImages] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    async function loadImage() {
-      const image = await fetchBreedImage(cat);
-      setCatBreedImage(image);
-    }
+    async function loadImages() {
+      const breedId = cat.id; // Assuming you have a unique id for each breed
+      const storedImages = localStorage.getItem(breedId);
 
-    loadImage();
+      if (storedImages) {
+        setCatImages(JSON.parse(storedImages));
+      } else {
+        const images = await fetchBreedImages(cat);
+        setCatImages(images);
+        localStorage.setItem(breedId, JSON.stringify(images));
+      }
+    }
+    
+    loadImages();
   }, [cat]);
   // Replace with your actual calculation
   const adoptionScore = calculateCatAdoptionScore(cat);
@@ -36,7 +43,8 @@ const CatCard = ({ cat }: CatCardProps) => {
           {name}
         </h3>
       </div>
-      {cat.alt_names && <span><h3 className="font-bold">Aka:</h3> {cat.alt_names}</span>}<span><h3 className="font-bold">Temperament:</h3> {temperament}</span>
+      {cat.alt_names && <span><h3 className="font-bold">Aka:</h3> {cat.alt_names}</span>}
+      <span><h3 className="font-bold">Temperament:</h3> {temperament}</span>
 
       <p className='flex mt-6 text-[32px] leading-[38px] font-extrabold align-middle'>
         <span className='self-start text-[14px] leading-[17px] font-semibold pt-2'>Adoption Score: </span>
@@ -44,13 +52,14 @@ const CatCard = ({ cat }: CatCardProps) => {
       </p>
 
       <div className='relative w-full h-40 my-3 object-contain'>
-      {catBreedImage ? (
-    <Image src={catBreedImage} fill={true} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{objectFit: 'contain'}} alt={name} />
-  ) : (
-    <div className="flex items-center justify-center h-full">
-      <span>Image Not Found</span>
-    </div>
-  )}
+      {catImages[0] ? (
+        <Image src={catImages[0]} fill={true} sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" style={{objectFit: 'contain'}} alt={name} />
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <span>Image Not Found</span>
+        </div>
+
+      )}
       </div>
       <div className='relative flex w-full mt-2'>
         <div className='flex group-hover:invisible w-full justify-between text-grey'>
@@ -70,7 +79,6 @@ const CatCard = ({ cat }: CatCardProps) => {
           </span>
         </div>
 
-
         <div className="cat-card__btn-container">
           <CustomButton
             title='View More'
@@ -82,8 +90,7 @@ const CatCard = ({ cat }: CatCardProps) => {
         </div>
       </div>
 
-      {/* Replace CarDetails with CatDetails when you create it */}
-      <CatDetails isOpen={isOpen} closeModal={() => setIsOpen(false)} cat={cat} /> 
+      <CatDetails isOpen={isOpen} closeModal={() => setIsOpen(false)} cat={cat} catImages={catImages} />
     </div >
   );
 };

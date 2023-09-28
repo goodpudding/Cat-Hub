@@ -9,6 +9,7 @@ const CAT_API_KEY = process.env.CAT_API_KEY || '';
 
 export interface CatBreedProps {
   weight: { imperial: string; metric: string };
+  description: string;
   id: string;
   name: string;
   cfa_url: string;
@@ -18,7 +19,6 @@ export interface CatBreedProps {
   origin: string;
   country_codes: string;
   country_code: string;
-  description: string;
   life_span: string;
   indoor: number;
   lap: number;
@@ -75,17 +75,19 @@ export const fetchCatBreeds = async () => {
   return response.data;
 };
 
-export const fetchBreedImage = async (cat: CatBreedProps) => {
-  // const { origin, temperament, limit } = filters;
-
+export const fetchBreedImages = async (cat: CatBreedProps) => {
   const config = {
     headers: {
       'x-api-key': CAT_API_KEY,
     },
   };
 
-  const response = await axios.get(`https://api.thecatapi.com/v1/images/search?breed_ids=${cat.id}`, config);
-  return response.data[0].url;
+  const response = await axios.get(
+    `https://api.thecatapi.com/v1/images/search?limit=5&breed_ids=${cat.id}`, 
+    config
+  );
+
+  return response.data.map((imgObj: any) => imgObj.url);
 };
 
 export const generateCatInfoLinks = (cat: CatBreedProps) => {
