@@ -1,7 +1,7 @@
 'use client'
 
 import Image from 'next/image';
-import { useState } from 'react'; // Import useState
+import { useState, useEffect } from 'react'; // Import useEffect
 import { Fragment } from 'react';
 
 import { Dialog, Transition } from '@headlessui/react'
@@ -15,12 +15,18 @@ interface CatDetailsProps {
   catImages: string[];
 }
 const CatDetails = ({ isOpen, closeModal, cat, catImages }: CatDetailsProps) => {
-  const [mainImage, setMainImage] = useState(catImages[0]); // Initialize mainImage state
-  // setMainImage(catImages[0]); // Set mainImage state to the first image in the array
+  const [mainImage, setMainImage] = useState('');
+
+  // Add useEffect as before to initialize mainImage
+  useEffect(() => {
+    if (catImages.length > 0) {
+      setMainImage(catImages[0]); // Set mainImage state to the first image in the updated array
+    }
+  }, [catImages]);
+
   const handleImageClick = (url: string) => {
     setMainImage(url); // Update mainImage state
   };
-  console.log(catImages[0]);
 
   return (
     <>
@@ -47,13 +53,13 @@ const CatDetails = ({ isOpen, closeModal, cat, catImages }: CatDetailsProps) => 
                     <Image src='close.svg' alt='close' width={20} height={20} className='object-contain' />
                   </button>
                   <div className='flex-1 flex flex-col gap-3'>
-                    <div className='relative flex w-full h-40 rounded-lg'>
-                      <Image src={mainImage} alt='cat' fill priority className='object-contain' />
+                    <div className='relative w-full h-80 bg-cover bg-center rounded-lg overflow-hidden'>
+                      <Image src={mainImage} alt='cat' layout='fill' sizes='100vw' className='object-contain' />
                     </div>
-                    <div className='flex gap-3 '>
+                    <div className='flex gap-3 '> 
                       {catImages.map((url, index) => (
                         <div key={index} className='flex-1 relative w-full h-24 bg-primary-blue-100 rounded-lg' onClick={() => handleImageClick(url)}>
-                          <Image src={url} alt='cat' fill priority className='object-contain cursor-pointer' />
+                          <Image src={url} alt='cat' fill priority className='object-contain cursor-pointer' onClick={() => handleImageClick(url)} />
                         </div>
                       ))}
                     </div>
