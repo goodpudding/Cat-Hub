@@ -1,6 +1,7 @@
 import { Hero, SearchBar, CustomFilter, CatCard } from '@/components'
 import Image from 'next/image'
 import { fetchCatBreeds } from '@/utils'
+import { breedInfo, furLengthOptions } from '@/constants'
 
 export default async function Home() {
   const allCats = await fetchCatBreeds()
@@ -19,8 +20,8 @@ export default async function Home() {
       <div className='home__filters'>
         <SearchBar />
         <div className='home__filter-container'>
-          <CustomFilter title="Breed Origin"/>
-          <CustomFilter title="Fur Length"/>
+          <CustomFilter title="Breed Origin" options={breedInfo}/>
+          <CustomFilter title="Fur Length" options={furLengthOptions}/>
         </div>
       </div>
 

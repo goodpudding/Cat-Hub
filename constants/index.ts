@@ -92,6 +92,13 @@ export const breedInfo = [
   { title: "Sweden", value: "Sweden" },
 ];
 
+export const furLengthOptions = [
+  { title: "All", value: "" },
+  { title: "Short-haired", value: "Short-haired" },
+  { title: "Medium-haired", value: "Medium-haired" },
+  { title: "Long-haired", value: "Long-haired" },
+];
+
 export const characteristics = [
   {
     title: "Characteristic",
